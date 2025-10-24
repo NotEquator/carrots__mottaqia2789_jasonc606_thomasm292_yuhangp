@@ -1,4 +1,4 @@
-# It's Just a Wiki by Carrots
+# It's Just a Story by Carrots
 # Roster
 Mottaqi Abedin (PM), Jason Chan, Thomas Mackey, Yuhang Pan
 # Description
