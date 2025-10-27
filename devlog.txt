@@ -1,7 +1,14 @@
 2025-10-22 - Yuhangp:
 updated flag + added devlog & design doc
+
 2025-10-23 - Mottaqia2789:
 DD Review:
 	- Add more detail to program components (mention what routes needed and how pages interact)
 	- Make sure to make background clear when making map to not waste ink
 	- Remember SQLite syntax is "INTEGER" not "int" and "TEXT" not "string"
+
+2025-10-26 - Yuhangp:
+- added new component map to design doc
+- also updated site map
+- refactored design doc for Scenario Sigma, a storytelling website
+- included changes suggested from the prev DD review
