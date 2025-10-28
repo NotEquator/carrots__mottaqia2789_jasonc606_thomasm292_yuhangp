@@ -17,3 +17,10 @@ DD Review:
 Pivot DD Review:
 	- Add even more detail to program components
 	- Make sure to explicitly mention that users may only view the most recent edit
+
+2025-10-27 11:44PM - Yuhangp:
+Updated Design Doc:
+	- Added more details to program components like acc deletion feature, updating database, redirects after creating/editing story
+	- Added short descriptions for values of tables in database
+	- User can only view most recent update of story + fixed target ship date
+
