@@ -30,3 +30,4 @@ Updated Design Doc:
 2025-10-28 7:12PM - Yuhangp:
 - updated main flask app and homepage
 - fixed routing to homepage
+- add style.css file
