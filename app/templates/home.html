@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>It's Just a Story</title>
+  </head>
+  <body>
+    <nav>
+      <a href="{{ url_for('home') }}">Home</a>
+      <a href="{{ url_for('logout') }}">Logout</a>
+    </nav>
+    <h1> {{ username }} </h1>
+    <p> {{ bio }} </p>
+    {% if stories %}
+      <table>
+        <tr><th>Title</th><th>Link</th></tr>
+        {% for item in stories %}
+          <tr>
+            <td>{{ stories[item][0] }}</td>
+            <td><a href={{stories[item][1]}} target="_blank">read story</a></td>
+          </tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </body>
+</html>
