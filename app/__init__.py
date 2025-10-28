@@ -34,7 +34,7 @@ app.secret_key = "secret"
 @app.route("/", methods=['GET', 'POST'])
 def index():
     # stored active session, take user to response page
-    if 'user_id' in session:
+    if 'username' in session:
         return redirect(url_for("home")) 
     
     # no active session, user is taken to login
@@ -44,14 +44,22 @@ def index():
 def login():
     if request.method == 'POST':
         session['username'] = request.form['username'] # store input in session
-        c.execute(f"INSERT INTO users VALUES ('{request.form['username']}', 'temp_bio', '{request.form['password']}')") # store user info in db
+        db = sqlite3.connect(DB_FILE) #open if file exists, otherwise create
+        c = db.cursor()               #facilitate db ops -- you will use cursor to trigger db events
+        c.execute("INSERT INTO users (name, bio, password) VALUES (?, ?, ?)", (request.form['username'], 'temp_bio', request.form['password'])) # store user info in db
+        db.commit()
         return redirect(url_for('index')) # process login 
     return render_template('login.html')
 
 # If 'POST' is used as the method in the html file, then 'GET' does not need to be used
-@app.route("/response", methods=['GET', 'POST'])
-def response():
-    return render_template('home.html', username=session['username'], request=request.method)
+@app.route("/home", methods=['GET', 'POST'])
+def home():
+    return render_template('home.html', 
+                           username=session['username'], 
+                           bio="temporary bio.",
+                           stories={"story1": ["story1", "url1"],
+                                    "story2": ["story2", "url2"]},
+                           request=request.method)
 
 @app.route("/logout")
 def logout():

@@ -26,3 +26,7 @@ Updated Design Doc:
 
 2025-10-28 11:46AM - Yuhangp:
 - added file layout for app, added intial code for __init__.py, homepage, login/logout page
+
+2025-10-28 7:12PM - Yuhangp:
+- updated main flask app and homepage
+- fixed routing to homepage
