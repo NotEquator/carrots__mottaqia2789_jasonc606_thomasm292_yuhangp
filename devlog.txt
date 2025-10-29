@@ -40,7 +40,7 @@ jasonC -- 2025-10-28 21:40
 - stored user_id in session and fetched bio and stories from database
 
 2025-10-28 9:58PM  -  thomasm292
-- Finished writing the project description for the README. 
-	- Explained integration with SQLite3 for managing users, stories, and edits.
-	- Summarized user flow (login, profile, create/edit stories) and session-based authentication.
+- Finished writing the project description for the README
+	- Explained integration with SQLite3 for managing users, stories, and edits
+	- Summarized user flow (login, profile, create/edit stories) and session-based authentication
 	- Described dynamic rendering with Jinja2 templates and consistent navigation with search and logout options
