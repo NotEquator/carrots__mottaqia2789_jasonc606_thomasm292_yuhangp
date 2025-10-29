@@ -44,3 +44,6 @@ jasonC -- 2025-10-28 21:40
 	- Explained integration with SQLite3 for managing users, stories, and edits
 	- Summarized user flow (login, profile, create/edit stories) and session-based authentication
 	- Described dynamic rendering with Jinja2 templates and consistent navigation with search and logout options
+
+2025-10-28 11:27 - mottaqia2789:
+- implemented a way to prevent accounts with no username/password from being added to the db
