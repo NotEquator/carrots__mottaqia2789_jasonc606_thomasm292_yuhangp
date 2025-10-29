@@ -20,7 +20,7 @@ db = sqlite3.connect(DB_FILE) #open if file exists, otherwise create
 c = db.cursor()               #facilitate db ops -- you will use cursor to trigger db events
 
 #create tables if it isn't there already
-c.execute("CREATE TABLE IF NOT EXISTS users (name TEXT NOT NULL, bio TEXT, password TEXT NOT NULL)")	# creates table
+c.execute("CREATE TABLE IF NOT EXISTS users (name TEXT NOT NULL, bio TEXT, password TEXT NOT NULL, UNIQUE(name))")	# creates table
 c.execute("CREATE TABLE IF NOT EXISTS stories (story_id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, content TEXT, last_update DATE, author_id INTEGER)")
 c.execute("CREATE TABLE IF NOT EXISTS edits (user_id INTEGER, name TEXT)")
 
@@ -50,7 +50,7 @@ def login():
         session['username'] = request.form['username'] # store input in session
         db = sqlite3.connect(DB_FILE) #open if file exists, otherwise create
         c = db.cursor()               #facilitate db ops -- you will use cursor to trigger db events
-        c.execute("INSERT INTO users (name, bio, password) VALUES (?, ?, ?)", (username, 'temp_bio', password)) # store user info in db
+        c.execute("INSERT OR IGNORE INTO users (name, bio, password) VALUES (?, ?, ?)", (username, 'temp_bio', password)) # store user info in db
         db.commit()
         db.close()
         return redirect(url_for('index')) # process login
@@ -62,7 +62,7 @@ def home():
     db = sqlite3.connect(DB_FILE)
     c = db.cursor()
     #bio = c.execute(f"SELECT bio FROM users WHERE name={session['username']}").fetchone()[0]
-    stories = c.execute(f"SELECT story_id FROM edits WHERE name={session['username']}").fetchall()
+    #stories = c.execute(f"SELECT story_id FROM edits WHERE name={session['username']}").fetchall()
     return render_template('home.html',
                            username=session['username'],
                            bio="temp bio",
