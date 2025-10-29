@@ -20,7 +20,7 @@ db = sqlite3.connect(DB_FILE) #open if file exists, otherwise create
 c = db.cursor()               #facilitate db ops -- you will use cursor to trigger db events
 
 #create tables if it isn't there already
-c.execute("CREATE TABLE IF NOT EXISTS users (user_id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, bio TEXT, password TEXT)")	# creates table
+c.execute("CREATE TABLE IF NOT EXISTS users (user_id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, bio TEXT, password TEXT NOT NULL)")	# creates table
 c.execute("CREATE TABLE IF NOT EXISTS stories (story_id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, content TEXT, last_update DATE, author_id INTEGER)")
 c.execute("CREATE TABLE IF NOT EXISTS edits (user_id INTEGER, story_id INTEGER)")
 
@@ -39,6 +39,14 @@ def index():
 @app.route("/login", methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
+        # store username and password as a variable
+        username = request.form.get('username').strip()
+        password = request.form.get('password').strip()
+
+        # render login page if username or password box is empty
+        if not username or not password:
+            return render_template('login.html')
+
         session['username'] = request.form['username'] # store input in session
         db = sqlite3.connect(DB_FILE) #open if file exists, otherwise create
         c = db.cursor()               #facilitate db ops -- you will use cursor to trigger db events
