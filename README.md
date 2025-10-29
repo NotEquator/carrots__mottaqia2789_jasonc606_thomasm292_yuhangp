@@ -11,9 +11,9 @@ The app uses Flask’s routing system to manage navigation between pages such as
 The site also features a consistent navigation bar across all pages, providing quick access to the homepage, a search bar to find stories by title or keyword, and a logout button.
 
 From a technical standpoint, the application uses Flask sessions to handle authentication securely, ensuring users stay logged in across different pages. The SQLite3 database manages three main tables:
-Users – stores user credentials, bios, and the stories they’ve contributed to.
-Stories – stores the title, content, creation date, and last updated timestamp for each story.
-Edits – links users to the stories they’ve edited, preventing multiple edits from the same account.
+* Users – stores user credentials, bios, and the stories they’ve contributed to.
+* Stories – stores the title, content, creation date, and last updated timestamp for each story.
+* Edits – links users to the stories they’ve edited, preventing multiple edits from the same account.
 
 All pages are rendered using Jinja2 HTML templates, which dynamically display user data, story content, and interactive forms for story creation and editing. A create story page allows users to submit new stories, while an edit page provides a pre-filled text form containing the current story content so the user can make additions or modifications before saving.
 
