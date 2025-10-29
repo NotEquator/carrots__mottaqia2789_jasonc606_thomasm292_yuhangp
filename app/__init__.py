@@ -19,14 +19,10 @@ DB_FILE="discobandit.db"
 db = sqlite3.connect(DB_FILE) #open if file exists, otherwise create
 c = db.cursor()               #facilitate db ops -- you will use cursor to trigger db events
 
-c.execute("DROP TABLE IF EXISTS users")		# removes table if it already exists
-c.execute("CREATE TABLE users (user_id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, bio TEXT, password TEXT)")	# creates table
-
-c.execute("DROP TABLE IF EXISTS stories")
-c.execute("CREATE TABLE stories (story_id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, content TEXT, last_update DATE, author_id INTEGER)")
-
-c.execute("DROP TABLE IF EXISTS edits")
-c.execute("CREATE TABLE edits (user_id INTEGER, story_id INTEGER)")
+#create tables if it isn't there already
+c.execute("CREATE TABLE IF NOT EXISTS users (user_id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, bio TEXT, password TEXT)")	# creates table
+c.execute("CREATE TABLE IF NOT EXISTS stories (story_id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, content TEXT, last_update DATE, author_id INTEGER)")
+c.execute("CREATE TABLE IF NOT EXISTS edits (user_id INTEGER, story_id INTEGER)")
 
 app = Flask(__name__)
 app.secret_key = "secret"
