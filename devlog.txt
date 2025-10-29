@@ -31,3 +31,7 @@ Updated Design Doc:
 - updated main flask app and homepage
 - fixed routing to homepage
 - add style.css file
+
+jasonC -- 2025-10-28 21:40
+	- filled in initial text for install guide and launch code sections of readme
+	- fixed an error in __init__.py where the datatables kept on reseting when running code
