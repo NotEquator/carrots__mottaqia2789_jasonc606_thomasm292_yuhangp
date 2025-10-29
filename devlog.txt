@@ -31,3 +31,7 @@ Updated Design Doc:
 - updated main flask app and homepage
 - fixed routing to homepage
 - add style.css file
+
+2025-10-28 9:48PM - Yuhangp:
+- jason updated table creation code for database
+- stored user_id in session and fetched bio and stories from database

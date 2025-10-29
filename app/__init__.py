@@ -44,15 +44,22 @@ def login():
         c = db.cursor()               #facilitate db ops -- you will use cursor to trigger db events
         c.execute("INSERT INTO users (name, bio, password) VALUES (?, ?, ?)", (request.form['username'], 'temp_bio', request.form['password'])) # store user info in db
         db.commit()
+        userid = c.lastrowid
+        db.close()
+        session['userid'] = userid
         return redirect(url_for('index')) # process login 
     return render_template('login.html')
 
 # If 'POST' is used as the method in the html file, then 'GET' does not need to be used
 @app.route("/home", methods=['GET', 'POST'])
 def home():
+    db = sqlite3.connect(DB_FILE)
+    c = db.cursor()
+    bio = c.execute(f"SELECT bio FROM users WHERE user_id={session['userid']}").fetchone()[0]
+    stories = c.execute(f"SELECT story_id FROM edits WHERE user_id={session['userid']}").fetchall()
     return render_template('home.html', 
                            username=session['username'], 
-                           bio="temporary bio.",
+                           bio=bio,
                            stories={"story1": ["story1", "url1"],
                                     "story2": ["story2", "url2"]},
                            request=request.method)
