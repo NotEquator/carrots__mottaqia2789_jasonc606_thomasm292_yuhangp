@@ -32,6 +32,9 @@ Updated Design Doc:
 - fixed routing to homepage
 - add style.css file
 
+jasonC -- 2025-10-28 21:40
+	- filled in initial text for install guide and launch code sections of readme
+	- fixed an error in __init__.py where the datatables kept on reseting when running code
+
 2025-10-28 9:48PM - Yuhangp:
-- jason updated table creation code for database
 - stored user_id in session and fetched bio and stories from database
