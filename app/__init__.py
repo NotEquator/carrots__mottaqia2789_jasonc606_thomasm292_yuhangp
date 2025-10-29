@@ -61,11 +61,11 @@ def login():
 def home():
     db = sqlite3.connect(DB_FILE)
     c = db.cursor()
-    bio = c.execute(f"SELECT bio FROM users WHERE name={session['username']}").fetchone()[0]
+    #bio = c.execute(f"SELECT bio FROM users WHERE name={session['username']}").fetchone()[0]
     stories = c.execute(f"SELECT story_id FROM edits WHERE name={session['username']}").fetchall()
     return render_template('home.html',
                            username=session['username'],
-                           bio=bio,
+                           bio="temp bio",
                            stories={"story1": ["story1", "url1"],
                                     "story2": ["story2", "url2"]},
                            request=request.method)
