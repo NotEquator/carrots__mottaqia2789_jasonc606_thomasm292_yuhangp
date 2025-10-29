@@ -6,7 +6,7 @@ Mottaqi Abedin (PM), Jason Chan, Thomas Mackey, Yuhang Pan
  
 Once logged in, users will be directed to a personalized landing page that displays their profile information (name and bio), a list of stories they have contributed to, and an option to create a new story. If a visitor is not logged in, they will instead see a simplified homepage with links to the login and registration pages.
 
-The app uses Flask’s routing system to manage navigation between pages such as the homepage, login/register page, individual story pages, and edit or create story pages. Each story page dynamically loads content from the database, showing the latest version of the story. To maintain fairness and creativity in collaboration, each user can only edit or add to a story once — after contributing, they can view the updated version but cannot make further changes.
+The app uses Flask’s routing system to manage navigation between pages such as the homepage, login/register page, individual story pages, and edit or create story pages. Each story page dynamically loads content from the database, showing the latest version of the story. To maintain fairness and creativity in collaboration, each user can only edit or add to a story once. After contributing, they can view the updated version but cannot make further changes.
 
 The site also features a consistent navigation bar across all pages, providing quick access to the homepage, a search bar to find stories by title or keyword, and a logout button.
 
