@@ -4,7 +4,7 @@
 # P00 - Move Slowly and Fix Things
 # 2025-10-28
 
-from flask import Flask           
+from flask import Flask
 from flask import render_template
 from flask import request
 from flask import session
@@ -20,9 +20,9 @@ db = sqlite3.connect(DB_FILE) #open if file exists, otherwise create
 c = db.cursor()               #facilitate db ops -- you will use cursor to trigger db events
 
 #create tables if it isn't there already
-c.execute("CREATE TABLE IF NOT EXISTS users (user_id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, bio TEXT, password TEXT NOT NULL)")	# creates table
+c.execute("CREATE TABLE IF NOT EXISTS users (name TEXT NOT NULL, bio TEXT, password TEXT NOT NULL)")	# creates table
 c.execute("CREATE TABLE IF NOT EXISTS stories (story_id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, content TEXT, last_update DATE, author_id INTEGER)")
-c.execute("CREATE TABLE IF NOT EXISTS edits (user_id INTEGER, story_id INTEGER)")
+c.execute("CREATE TABLE IF NOT EXISTS edits (user_id INTEGER, name TEXT)")
 
 app = Flask(__name__)
 app.secret_key = "secret"
@@ -31,8 +31,8 @@ app.secret_key = "secret"
 def index():
     # stored active session, take user to response page
     if 'username' in session:
-        return redirect(url_for("home")) 
-    
+        return redirect(url_for("home"))
+
     # no active session, user is taken to login
     return redirect(url_for("login"))
 # GET is used to retrieve root page, removing POST or having it in does not impact the running of the page
@@ -50,12 +50,10 @@ def login():
         session['username'] = request.form['username'] # store input in session
         db = sqlite3.connect(DB_FILE) #open if file exists, otherwise create
         c = db.cursor()               #facilitate db ops -- you will use cursor to trigger db events
-        c.execute("INSERT INTO users (name, bio, password) VALUES (?, ?, ?)", (request.form['username'], 'temp_bio', request.form['password'])) # store user info in db
+        c.execute("INSERT INTO users (name, bio, password) VALUES (?, ?, ?)", (username, 'temp_bio', password)) # store user info in db
         db.commit()
-        userid = c.lastrowid
         db.close()
-        session['userid'] = userid
-        return redirect(url_for('index')) # process login 
+        return redirect(url_for('index')) # process login
     return render_template('login.html')
 
 # If 'POST' is used as the method in the html file, then 'GET' does not need to be used
@@ -63,10 +61,10 @@ def login():
 def home():
     db = sqlite3.connect(DB_FILE)
     c = db.cursor()
-    bio = c.execute(f"SELECT bio FROM users WHERE user_id={session['userid']}").fetchone()[0]
-    stories = c.execute(f"SELECT story_id FROM edits WHERE user_id={session['userid']}").fetchall()
-    return render_template('home.html', 
-                           username=session['username'], 
+    bio = c.execute(f"SELECT bio FROM users WHERE name={session['username']}").fetchone()[0]
+    stories = c.execute(f"SELECT story_id FROM edits WHERE name={session['username']}").fetchall()
+    return render_template('home.html',
+                           username=session['username'],
                            bio=bio,
                            stories={"story1": ["story1", "url1"],
                                     "story2": ["story2", "url2"]},
