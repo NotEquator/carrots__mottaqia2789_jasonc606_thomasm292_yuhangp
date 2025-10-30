@@ -40,6 +40,9 @@ def index():
 def login():
     if request.method == 'POST':
         # store username and password as a variable
+        db = sqlite3.connect(DB_FILE) #open if file exists, otherwise create
+        c = db.cursor()
+        session['username'] = request.form['username']
         username = request.form.get('username').strip()
         password = request.form.get('password').strip()
 
@@ -47,9 +50,12 @@ def login():
         if not username or not password:
             return render_template('login.html')
 
-        session['username'] = request.form['username'] # store input in session
-        db = sqlite3.connect(DB_FILE) #open if file exists, otherwise create
-        c = db.cursor()               #facilitate db ops -- you will use cursor to trigger db events
+        dbpassword = c.execute(f"SELECT password FROM users WHERE name ='test'").fetchone()[0]
+        dbusername = c.execute(f"SELECT name FROM users WHERE name ='test'").fetchone()[0]
+
+        if (password == dbpassword) and (username == dbusername):
+            return redirect(url_for("home"))
+ # store input in session          #facilitate db ops -- you will use cursor to trigger db events
         c.execute("INSERT OR IGNORE INTO users (name, bio, password) VALUES (?, ?, ?)", (username, 'temp_bio', password)) # store user info in db
         db.commit()
         db.close()
