@@ -39,27 +39,38 @@ def index():
 @app.route("/login", methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        # store username and password as a variable
-        db = sqlite3.connect(DB_FILE) #open if file exists, otherwise create
+        db = sqlite3.connect(DB_FILE)
         c = db.cursor()
-        session['username'] = request.form['username']
-        username = request.form.get('username').strip()
+        # store username and password as a variable
+        username = request.form.get('username').strip().lower
         password = request.form.get('password').strip()
 
         # render login page if username or password box is empty
         if not username or not password:
+            db.close()
             return render_template('login.html')
 
-        dbpassword = c.execute(f"SELECT password FROM users WHERE name ='test'").fetchone()[0]
-        dbusername = c.execute(f"SELECT name FROM users WHERE name ='test'").fetchone()[0]
+        #search user db for password from a certain username
+        pw_result = c.execute("SELECT password FROM users WHERE name = ?", (username,)).fetchone()
 
-        if (password == dbpassword) and (username == dbusername):
-            return redirect(url_for("home"))
- # store input in session          #facilitate db ops -- you will use cursor to trigger db events
-        c.execute("INSERT OR IGNORE INTO users (name, bio, password) VALUES (?, ?, ?)", (username, 'temp_bio', password)) # store user info in db
-        db.commit()
-        db.close()
-        return redirect(url_for('index')) # process login
+        #if there is a user with that username in the db, check if password is correct. else create a new user.
+        if pw_result is not None:
+            db_password = pw_result[0]
+            # if password in session matches the one in db, redirect to home. else render login template
+            if password == db_password:
+                session['username'] = username
+                db.close()
+                return redirect(url_for("home"))
+            else:
+                db.close()
+                return render_template('login.html')
+        else:
+            c.execute("INSERT OR IGNORE INTO users (name, bio, password) VALUES (?, ?, ?)", (username, 'temp_bio', password)) # store user info in db
+            db.commit()
+            db.close()
+            session['username'] = username
+            return redirect(url_for('home'))
+        
     return render_template('login.html')
 
 # If 'POST' is used as the method in the html file, then 'GET' does not need to be used
