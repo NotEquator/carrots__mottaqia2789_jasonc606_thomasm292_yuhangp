@@ -58,3 +58,8 @@ jasonC -- 2025-10-28 21:40
 - fixed authentication
 - added create stories and stored them in stories table, but is not retrieving story data from stories table yet
 - added form labels
+
+2025-10-31 11:50 - everyone:
+- fixed error involving retrieving bio from the user table
+- updated homepage
+- updated story table
