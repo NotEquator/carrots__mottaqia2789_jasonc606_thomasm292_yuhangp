@@ -53,3 +53,8 @@ jasonC -- 2025-10-28 21:40
 
 2025-10-30 23:11 - mottaqia2789:
 - made authentication work somewhat
+
+2025-10-30 23:58 - yuhangp:
+- fixed authentication
+- added create stories and stored them in stories table, but is not retrieving story data from stories table yet
+- added form labels

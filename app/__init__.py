@@ -13,6 +13,8 @@ from flask import redirect, url_for
 import sqlite3   #enable control of an sqlite database
 import csv       #facilitate CSV I/O
 
+from datetime import date
+
 
 DB_FILE="discobandit.db"
 
@@ -21,8 +23,8 @@ c = db.cursor()               #facilitate db ops -- you will use cursor to trigg
 
 #create tables if it isn't there already
 c.execute("CREATE TABLE IF NOT EXISTS users (name TEXT NOT NULL, bio TEXT, password TEXT NOT NULL, UNIQUE(name))")	# creates table
-c.execute("CREATE TABLE IF NOT EXISTS stories (story_id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, content TEXT, last_update DATE, author_id INTEGER)")
-c.execute("CREATE TABLE IF NOT EXISTS edits (user_id INTEGER, name TEXT)")
+c.execute("CREATE TABLE IF NOT EXISTS stories (story_id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, content TEXT, last_update DATE, author_name TEXT)")
+c.execute("CREATE TABLE IF NOT EXISTS edits (story_id INTEGER, author_name TEXT)")
 
 app = Flask(__name__)
 app.secret_key = "secret"
@@ -42,7 +44,7 @@ def login():
         db = sqlite3.connect(DB_FILE)
         c = db.cursor()
         # store username and password as a variable
-        username = request.form.get('username').strip().lower
+        username = request.form.get('username').strip().lower()
         password = request.form.get('password').strip()
 
         # render login page if username or password box is empty
@@ -78,14 +80,35 @@ def login():
 def home():
     db = sqlite3.connect(DB_FILE)
     c = db.cursor()
-    #bio = c.execute(f"SELECT bio FROM users WHERE name={session['username']}").fetchone()[0]
-    #stories = c.execute(f"SELECT story_id FROM edits WHERE name={session['username']}").fetchall()
+    bio = c.execute(f"SELECT bio FROM users WHERE name=?", (session['username'],)).fetchone()[0]
+    #stories = c.execute(f"SELECT story_id FROM edits WHERE author_name=?", (session['username'],)).fetchall()
     return render_template('home.html',
                            username=session['username'],
-                           bio="temp bio",
+                           bio=bio,
                            stories={"story1": ["story1", "url1"],
                                     "story2": ["story2", "url2"]},
                            request=request.method)
+
+@app.route("/create", methods=['GET', 'POST'])
+def create():
+    if request.method == 'POST':
+        db = sqlite3.connect(DB_FILE)
+        c = db.cursor()
+        title = request.form.get('title').strip()
+        content = request.form.get('content').strip()
+        author = session['username']
+
+        if not title or not content:
+            db.close()
+            return render_template('create.html')
+
+        c.execute("INSERT INTO stories (title, content, last_update, author_name) VALUES (?, ?, ?, ?)", (title, content, date.today(), author))
+        c.execute("INSERT INTO edits (story_id, author_name) VALUES (?, ?)", (c.lastrowid, author))
+        db.commit()
+        db.close()
+        return redirect(url_for('home'))
+
+    return render_template('create.html')
 
 @app.route("/logout")
 def logout():
