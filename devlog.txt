@@ -47,3 +47,6 @@ jasonC -- 2025-10-28 21:40
 
 2025-10-28 11:27 - mottaqia2789:
 - implemented a way to prevent accounts with no username/password from being added to the db
+
+2025-10-30 23:08 - Yuhangp:
+- add requirements.txt (python module dependencies)
