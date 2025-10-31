@@ -72,7 +72,7 @@ def login():
             db.close()
             session['username'] = username
             return redirect(url_for('home'))
-        
+
     return render_template('login.html')
 
 # If 'POST' is used as the method in the html file, then 'GET' does not need to be used
@@ -80,13 +80,14 @@ def login():
 def home():
     db = sqlite3.connect(DB_FILE)
     c = db.cursor()
-    bio = c.execute(f"SELECT bio FROM users WHERE name=?", (session['username'],)).fetchone()[0]
-    #stories = c.execute(f"SELECT story_id FROM edits WHERE author_name=?", (session['username'],)).fetchall()
+    db_bio = c.execute("SELECT bio FROM users WHERE name=?", (session['username'],)).fetchone()
+    db_editlog = c.execute("SELECT * FROM edits WHERE author_name=?", (session['username'],)).fetchall()
+    db_storyid = db_editlog[0]
+    db_stories = c.execute("SELECT * FROM stories WHERE story_id =?", ('db_storyid',)).fetchone()
     return render_template('home.html',
                            username=session['username'],
-                           bio=bio,
-                           stories={"story1": ["story1", "url1"],
-                                    "story2": ["story2", "url2"]},
+                           bio=db_bio[0] if db_bio is not None else "no bio",
+                           stories=db_stories,
                            request=request.method)
 
 @app.route("/create", methods=['GET', 'POST'])
