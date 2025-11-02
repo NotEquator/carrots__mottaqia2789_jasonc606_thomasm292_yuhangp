@@ -11,9 +11,7 @@ from flask import session
 from flask import redirect, url_for
 
 import sqlite3   #enable control of an sqlite database
-import csv       #facilitate CSV I/O
-
-from datetime import date
+import datetime
 
 
 DB_FILE="discobandit.db"
@@ -82,12 +80,22 @@ def home():
     c = db.cursor()
     db_bio = c.execute("SELECT bio FROM users WHERE name=?", (session['username'],)).fetchone()
     db_editlog = c.execute("SELECT * FROM edits WHERE author_name=?", (session['username'],)).fetchall()
-    db_storyid = db_editlog[0]
-    db_stories = c.execute("SELECT * FROM stories WHERE story_id =?", ('db_storyid',)).fetchone()
+    stories = []
+    for edit in db_editlog:
+        story = c.execute("SELECT title FROM stories WHERE story_id=?", (edit[0],)).fetchone() # edit[0] = db_editlog[k][0] = story_id
+        stories.append([edit[0], story[0]])  # story[0] = title
+    # db_storyid = db_editlog[0] if db_editlog else None
+    # print("\n\n\n**********")
+    # print(db_storyid)
+    # print(db_storyid[0] if db_storyid else "No story id found")
+    # db_stories = c.execute("SELECT * FROM stories WHERE story_id =?", (db_storyid[0],)).fetchone()
+    # print("\n\n\ndbstories**********")
+    # print(db_stories)
+    db.close()
     return render_template('home.html',
                            username=session['username'],
                            bio=db_bio[0] if db_bio is not None else "no bio",
-                           stories=db_stories,
+                           stories=stories,
                            request=request.method)
 
 @app.route("/create", methods=['GET', 'POST'])
@@ -103,13 +111,61 @@ def create():
             db.close()
             return render_template('create.html')
 
-        c.execute("INSERT INTO stories (title, content, last_update, author_name) VALUES (?, ?, ?, ?)", (title, content, date.today(), author))
+        c.execute("INSERT INTO stories (title, content, last_update, author_name) VALUES (?, ?, ?, ?)", (title, content, datetime.datetime.now(), author))
         c.execute("INSERT INTO edits (story_id, author_name) VALUES (?, ?)", (c.lastrowid, author))
         db.commit()
         db.close()
         return redirect(url_for('home'))
 
     return render_template('create.html')
+
+@app.route("/story/<int:story_id>")
+def story(story_id):
+    db = sqlite3.connect(DB_FILE)
+    c = db.cursor()
+    story = c.execute("SELECT title, content, last_update, author_name FROM stories WHERE story_id=?", (story_id,)).fetchone()
+    edit = c.execute("SELECT story_id FROM edits WHERE author_name=?", (session['username'],)).fetchall()
+    has_edited = False
+    for e in edit:
+        if e[0] == story_id:
+            has_edited = True
+            break
+    db.close()
+
+    return render_template("story.html",
+                            title=story[0],
+                            content=story[1],
+                            last_update=story[2],
+                            author=story[3],
+                            story_id=story_id,
+                            has_edited=has_edited
+    )
+
+@app.route("/edit/<int:story_id>", methods=['GET', 'POST'])
+def edit(story_id):
+    db = sqlite3.connect(DB_FILE)
+    c = db.cursor()
+    if request.method == 'POST':
+        title = request.form.get('title').strip()
+        content = request.form.get('content').strip()
+        author = session['username']
+
+        if not title or not content:
+            db.close()
+            prevtitle, prevcontent = c.execute("SELECT title, content FROM stories WHERE story_id=?", (story_id,)).fetchone()
+            return render_template('edit.html', story_id=story_id, prevtitle=prevtitle, prevcontent=prevcontent)
+
+        c.execute("UPDATE stories SET title=?, content=?, last_update=? WHERE story_id=?", (title, content, datetime.datetime.now(), story_id))
+        c.execute("INSERT INTO edits (story_id, author_name) VALUES (?, ?)", (story_id, author))
+        db.commit()
+        db.close()
+        return redirect(url_for('story', story_id=story_id))
+    
+    prevtitle, prevcontent = c.execute("SELECT title, content FROM stories WHERE story_id=?", (story_id,)).fetchone()
+    db.close()
+    
+    return render_template('edit.html', prevtitle=prevtitle, prevcontent=prevcontent, story_id=story_id)
+    
 
 @app.route("/logout")
 def logout():

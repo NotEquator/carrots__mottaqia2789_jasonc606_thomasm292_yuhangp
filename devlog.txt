@@ -63,3 +63,7 @@ jasonC -- 2025-10-28 21:40
 - fixed error involving retrieving bio from the user table
 - updated homepage
 - updated story table
+
+2025-11-02 15:57 - yuhangp:
+- retrieved stories from stories table to put on user homepage
+- completed story.html and added editing feature + user can only edit once by checking edits table

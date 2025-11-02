@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Edit Story</title>
+  </head>
+  <body>
+    <nav>
+      <a href="{{ url_for('home') }}">Home</a>
+      <a href="{{ url_for('create') }}">Create-Story</a>
+      <a href="{{ url_for('logout') }}">Logout</a>
+      <a href="{{ url_for('story', story_id=story_id) }}">Back-To-Story</a>
+    </nav>
+    <h1>Edit the story!</h1>
+    <form method="post">
+      <label for="title">Edit Title:</label>
+      <br>
+      <input type="text" name="title" id="title" value="{{ prevtitle }}">
+      <br><br>
+      <label for="content">Edit Content:</label>
+      <br>
+      <textarea id="content" name="content" rows="30" cols="80">{{ prevcontent }}</textarea>
+      <br><br>
+      <input type="submit" name="sub1">
+    </form>
+  </body>
+</html>
