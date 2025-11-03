@@ -98,6 +98,23 @@ def home():
                            stories=stories,
                            request=request.method)
 
+@app.route("/catalog")
+def catalog():
+    db = sqlite3.connect(DB_FILE)
+    c = db.cursor()
+    stories = []
+    db_catalog = c.execute("SELECT * FROM stories").fetchall()
+    for i in db_catalog:
+        title = i[1]
+        author = i[4]
+        select_id = c.execute("SELECT story_id FROM edits WHERE story_id=?", (i[0],)).fetchone()
+        id = select_id[0]
+        stories.append([id, title, author])
+    db.close()
+    return render_template('catalog.html',
+                            stories = stories,
+                            request = request.method)
+
 @app.route("/create", methods=['GET', 'POST'])
 def create():
     if request.method == 'POST':
@@ -160,12 +177,12 @@ def edit(story_id):
         db.commit()
         db.close()
         return redirect(url_for('story', story_id=story_id))
-    
+
     prevtitle, prevcontent = c.execute("SELECT title, content FROM stories WHERE story_id=?", (story_id,)).fetchone()
     db.close()
-    
+
     return render_template('edit.html', prevtitle=prevtitle, prevcontent=prevcontent, story_id=story_id)
-    
+
 
 @app.route("/logout")
 def logout():

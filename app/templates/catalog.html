@@ -11,14 +11,13 @@
       <a href="{{ url_for('catalog') }}">View-Stories</a>
       <a href="{{ url_for('logout') }}">Logout</a>
     </nav>
-    <h1> {{ username }} </h1>
-    <p> {{ bio }} </p>
     {% if stories %}
       <table>
-        <tr><th>Title</th><th>Link</th></tr>
+        <tr><th>Title</th><th>Author</th><th>Link</th></tr>
         {% for story in stories %}
           <tr>
             <td>{{ story[1] }}</td>
+            <td>{{ story[2]}}
             <td><a href="{{ url_for('story', story_id=story[0]) }}" target="_blank">read story</a></td>
           </tr>
         {% endfor %}
