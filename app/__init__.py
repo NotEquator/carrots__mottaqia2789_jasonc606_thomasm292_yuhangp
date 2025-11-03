@@ -57,8 +57,8 @@ def register():
             return render_template("register.html")
         
         # insert new user into table with a hashed password
-        hased_pw = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
-        c.execute("INSERT INTO users (name, bio, password) VALUES (?, ?, ?)", (username, "temp bio", hased_pw))
+        hashed_pw = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+        c.execute("INSERT INTO users (name, bio, password) VALUES (?, ?, ?)", (username, "temp bio", hashed_pw))
         db.commit()
         db.close()
 
