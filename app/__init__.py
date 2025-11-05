@@ -23,7 +23,7 @@ c = db.cursor()               #facilitate db ops -- you will use cursor to trigg
 #create tables if it isn't there already
 c.execute("CREATE TABLE IF NOT EXISTS users (name TEXT NOT NULL COLLATE NOCASE, bio TEXT, password TEXT NOT NULL, UNIQUE(name))")	# creates table
 c.execute("CREATE TABLE IF NOT EXISTS stories (story_id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, content TEXT, last_update DATE, author_name TEXT)")
-c.execute("CREATE TABLE IF NOT EXISTS edits (story_id INTEGER, author_name TEXT)")
+c.execute("CREATE TABLE IF NOT EXISTS edits (edit_id INTEGER PRIMARY KEY AUTOINCREMENT, story_id INTEGER, author_name TEXT, content TEXT)")
 
 app = Flask(__name__)
 app.secret_key = "secret"
@@ -55,7 +55,7 @@ def register():
         if exists:
             db.close()
             return render_template("register.html")
-        
+
         # insert new user into table with a hashed password
         hashed_pw = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
         c.execute("INSERT INTO users (name, bio, password) VALUES (?, ?, ?)", (username, "temp bio", hashed_pw))
@@ -90,7 +90,7 @@ def login():
 
         #retrieve the hashed password
         db_hash = account[0]
-        
+
         # check if hashed password is correct, if not then reload page
         if not bcrypt.checkpw(password.encode('utf-8'), db_hash.encode('utf-8')):
             return render_template("login.html")
@@ -163,7 +163,7 @@ def create():
             return render_template('create.html')
 
         c.execute("INSERT INTO stories (title, content, last_update, author_name) VALUES (?, ?, ?, ?)", (title, content, datetime.datetime.now(), author))
-        c.execute("INSERT INTO edits (story_id, author_name) VALUES (?, ?)", (c.lastrowid, author))
+        c.execute("INSERT INTO edits (story_id, author_name, content) VALUES (?, ?, ?)", (c.lastrowid, author, content))
         db.commit()
         db.close()
         return redirect(url_for('home'))
@@ -200,15 +200,23 @@ def edit(story_id):
         return redirect(url_for('login'))
     db = sqlite3.connect(DB_FILE)
     c = db.cursor()
+    title2 = c.execute("SELECT title FROM stories WHERE story_id=?", (story_id,)).fetchone()[0]
     if request.method == 'POST':
         title = request.form.get('title').strip()
+        print("hi:" + title2)
         content = request.form.get('content').strip()
         author = session['username']
 
         if not title or not content:
             db.close()
-            prevtitle, prevcontent = c.execute("SELECT title, content FROM stories WHERE story_id=?", (story_id,)).fetchone()
-            return render_template('edit.html', story_id=story_id, prevtitle=prevtitle, prevcontent=prevcontent)
+            id = 0
+            prevcontents = c.execute("SELECT content FROM edits WHERE story_id=?", (story_id,)).fetchall()
+            for row in prevcontents:
+                id2 = row[0]
+                if id2 > id:
+                    id = id2
+            prevcontent = c.execute("SELECT content FROM edits WHERE edit_id=?", (id,)).fetchone()[0]
+            return render_template('edit.html', story_id=story_id, title=title2, prevcontent=prevcontent)
 
         c.execute("UPDATE stories SET title=?, content=?, last_update=? WHERE story_id=?", (title, content, datetime.datetime.now(), story_id))
         c.execute("INSERT INTO edits (story_id, author_name) VALUES (?, ?)", (story_id, author))
@@ -216,10 +224,10 @@ def edit(story_id):
         db.close()
         return redirect(url_for('story', story_id=story_id))
 
-    prevtitle, prevcontent = c.execute("SELECT title, content FROM stories WHERE story_id=?", (story_id,)).fetchone()
+    prevcontents = c.execute("SELECT content FROM edits WHERE story_id=?", (story_id,)).fetchall()
     db.close()
 
-    return render_template('edit.html', prevtitle=prevtitle, prevcontent=prevcontent, story_id=story_id)
+    return render_template('edit.html', title=title2, prevcontents=prevcontents, story_id=story_id)
 
 
 @app.route("/logout")
