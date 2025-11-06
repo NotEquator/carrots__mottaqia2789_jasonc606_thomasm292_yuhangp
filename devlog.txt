@@ -100,3 +100,6 @@ jasonC -- 2025-11-05 00:48
 - Added CSS for the navbar
 - Added CSS for tables and forms
 - Added overall page styling and layout
+
+2025-11-05 23:04 - yuhangp
+- fixed style.css route
