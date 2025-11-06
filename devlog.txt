@@ -95,3 +95,8 @@ jasonC -- 2025-11-02 23:08
 jasonC -- 2025-11-05 00:48
 	- edited install guide and launch codes based on the feedback we received from the other teams
 	- omg idk what i was thinking when i made that
+
+2025-11-05 22:38  -  thomasm292
+- Added CSS for the navbar
+- Added CSS for tables and forms
+- Added overall page styling and layout
