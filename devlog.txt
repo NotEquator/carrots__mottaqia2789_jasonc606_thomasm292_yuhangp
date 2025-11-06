@@ -113,3 +113,6 @@ jasonC -- 2025-11-06 00:51
 - fixed catalog allowing user to see stories they haven't edited yet
 	- catalog now links you to edit page, where it will block you from editing if you already edited it
 - created page where you edit bio
+
+mottaqiA -- 2025-11-07 11:44
+- added error message for login
