@@ -20,7 +20,9 @@
       <br>
       <input type="submit" value="Login">
     </form>
-
+    {% if error %}
+      <h3>{{ error }}</h3>
+    {% endif %}
     <p>Don't have an account? <a href="{{ url_for('register') }}">Register here</a>.</p>
 
   </body>
