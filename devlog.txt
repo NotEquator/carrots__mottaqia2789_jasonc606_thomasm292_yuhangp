@@ -1,33 +1,33 @@
-2025-10-22 - Yuhangp:
+yuhangP -- 2025-10-22 22:53
 updated flag + added devlog & design doc
 
-2025-10-23 - Mottaqia2789:
+mottaqiA -- 2025-10-23 23:44
 DD Review:
 	- Add more detail to program components (mention what routes needed and how pages interact)
 	- Make sure to make background clear when making map to not waste ink
 	- Remember SQLite syntax is "INTEGER" not "int" and "TEXT" not "string"
 
-2025-10-26 - Yuhangp:
+yuhangP -- 2025-10-26 23:35
 - added new component map to design doc
 - also updated site map
 - refactored design doc for Scenario Sigma, a storytelling website
 - included changes suggested from the prev DD review
 
-2025-10-27 - Mottaqia2789:
+mottaqiA -- 2025-10-27 22:32
 Pivot DD Review:
 	- Add even more detail to program components
 	- Make sure to explicitly mention that users may only view the most recent edit
 
-2025-10-27 11:44PM - Yuhangp:
+yuhangP -- 2025-10-27 23:44
 Updated Design Doc:
 	- Added more details to program components like acc deletion feature, updating database, redirects after creating/editing story
 	- Added short descriptions for values of tables in database
 	- User can only view most recent update of story + fixed target ship date
 
-2025-10-28 11:46AM - Yuhangp:
+yuhangP -- 2025-10-28 11:46
 - added file layout for app, added intial code for __init__.py, homepage, login/logout page
 
-2025-10-28 7:12PM - Yuhangp:
+yuhangP -- 2025-10-28 19:12
 - updated main flask app and homepage
 - fixed routing to homepage
 - add style.css file
@@ -36,35 +36,35 @@ jasonC -- 2025-10-28 21:40
 	- filled in initial text for install guide and launch code sections of readme
 	- fixed an error in __init__.py where the datatables kept on reseting when running code
 
-2025-10-28 9:48PM - Yuhangp:
+yuhangP -- 2025-10-28 21:48
 - stored user_id in session and fetched bio and stories from database
 
-2025-10-28 21:58  -  thomasm292
+thomasM -- 2025-10-28 21:58
 - Finished writing the project description for the README
 	- Explained integration with SQLite3 for managing users, stories, and edits
 	- Summarized user flow (login, profile, create/edit stories) and session-based authentication
 	- Described dynamic rendering with Jinja2 templates and consistent navigation with search and logout options
 
-2025-10-28 11:27 - mottaqia2789:
+mottaqiA -- 2025-10-28 11:27
 - implemented a way to prevent accounts with no username/password from being added to the db
 
-2025-10-30 23:08 - Yuhangp:
+yuhangP -- 2025-10-30 23:08
 - add requirements.txt (python module dependencies)
 
-2025-10-30 23:11 - mottaqia2789:
+mottaqiA -- 2025-10-30 23:11
 - made authentication work somewhat
 
-2025-10-30 23:58 - yuhangp:
+yuhangP -- 2025-10-30 23:58
 - fixed authentication
 - added create stories and stored them in stories table, but is not retrieving story data from stories table yet
 - added form labels
 
-2025-10-31 11:50 - everyone:
-- fixed error involving retrieving bio from the user table
-- updated homepage
-- updated story table
+mottaqiA -- 2025-10-31 11:50
+- everyone fixed error involving retrieving bio from the user table
+- everyone updated homepage
+- everyone updated story table
 
-2025-11-02 15:57 - yuhangp:
+yuhangP -- 2025-11-02 15:57
 - retrieved stories from stories table to put on user homepage
 - completed story.html and added editing feature + user can only edit once by checking edits table
 - note: need to add a catalog page so that users can see other users' stories
@@ -72,36 +72,37 @@ jasonC -- 2025-10-28 21:40
 jasonC -- 2025-11-02 23:08
 		- created functioning catalog.html (including file and function in __init__.py)
 
-2025-11-02 23:51 - mottaqia2789
+mottaqiA -- 2025-11-02 23:51
 - created register.html
 - changed login.html to use proper password type
 - added register function to __init__.py
 - added hashing of passwords for security
 - made sure you can't access site if there is no login in session
 
-2025-11-03 11:43 - mottaqia2789
-- command "flask --app app.py run" does not work
-- mention virtual environment
-- put commands in code format
-- git clone command does not work
-- more concise
-- don't talk about how to use terminal
-- mention pip install -r requirements.txt
-- install more than just flask
+mottaqiA -- 2025-11-03 11:43
+- external README review
+	- command "flask --app app.py run" does not work
+	- mention virtual environment
+	- put commands in code format
+	- git clone command does not work
+	- more concise
+	- don't talk about how to use terminal
+	- mention pip install -r requirements.txt
+	- install more than just flask
 
-2025-11-04 22:22  -  thomasm292
+thomasM -- 2025-11-04 22:22
 - Condesned description in the README
 
 jasonC -- 2025-11-05 00:48
 	- edited install guide and launch codes based on the feedback we received from the other teams
 	- omg idk what i was thinking when i made that
 
-2025-11-05 22:38  -  thomasm292
+thomasM -- 2025-11-05 22:38
 - Added CSS for the navbar
 - Added CSS for tables and forms
 - Added overall page styling and layout
 
-2025-11-05 23:04 - yuhangp
+yuhangP -- 2025-11-05 23:04
 - fixed style.css route
 - updated logic for story:
 	- users can only see the lastest edit
