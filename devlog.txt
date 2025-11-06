@@ -107,3 +107,8 @@ jasonC -- 2025-11-05 00:48
 	- users can only see the lastest edit
 	- can only edit the content not the title
 	- can only add to story, can't delete anything
+
+jasonC -- 2025-11-06 00:51
+- fixed catalog allowing user to see stories they haven't edited yet
+	- catalog now links you to edit page, where it will block you from editing if you already edited it
+- created page where you edit bio
