@@ -46,7 +46,7 @@ def register():
 
         # reload page if no username or password was entered
         if not username or not password:
-            return render_template("register.html")
+            return render_template("register.html", error="No username or password inputted")
 
         db = sqlite3.connect(DB_FILE)
         c = db.cursor()
@@ -54,7 +54,7 @@ def register():
         exists = c.execute("SELECT 1 FROM users WHERE name = ?", (username,)).fetchone()
         if exists:
             db.close()
-            return render_template("register.html")
+            return render_template("register.html", error="Username already exists")
 
         # insert new user into table with a hashed password
         hashed_pw = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
@@ -76,7 +76,7 @@ def login():
 
         # render login page if username or password box is empty
         if not username or not password:
-            return render_template('login.html', )
+            return render_template('login.html', error="No username or password inputted")
 
         #search user table for password from a certain username
         db = sqlite3.connect(DB_FILE)
@@ -86,14 +86,14 @@ def login():
 
         #if there is no account then reload page
         if account is None:
-            return render_template("login.html")
+            return render_template("login.html", error="Username or password is incorrect")
 
         #retrieve the hashed password
         db_hash = account[0]
 
         # check if hashed password is correct, if not then reload page
         if not bcrypt.checkpw(password.encode('utf-8'), db_hash.encode('utf-8')):
-            return render_template("login.html")
+            return render_template("login.html", error="Username or password is incorrect")
 
         # if password is correct redirect home
         session["username"] = username
