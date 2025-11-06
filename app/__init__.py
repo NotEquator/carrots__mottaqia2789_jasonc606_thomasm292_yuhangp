@@ -23,7 +23,7 @@ c = db.cursor()               #facilitate db ops -- you will use cursor to trigg
 #create tables if it isn't there already
 c.execute("CREATE TABLE IF NOT EXISTS users (name TEXT NOT NULL COLLATE NOCASE, bio TEXT, password TEXT NOT NULL, UNIQUE(name))")	# creates table
 c.execute("CREATE TABLE IF NOT EXISTS stories (story_id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, content TEXT, last_update DATE, author_name TEXT)")
-c.execute("CREATE TABLE IF NOT EXISTS edits (story_id INTEGER, author_name TEXT)")
+c.execute("CREATE TABLE IF NOT EXISTS edits (edit_id INTEGER PRIMARY KEY AUTOINCREMENT, story_id INTEGER, author_name TEXT, content TEXT)")
 
 app = Flask(__name__)
 app.secret_key = "secret"
@@ -112,8 +112,8 @@ def home():
     db_editlog = c.execute("SELECT * FROM edits WHERE author_name=?", (session['username'],)).fetchall()
     stories = []
     for edit in db_editlog:
-        story = c.execute("SELECT title FROM stories WHERE story_id=?", (edit[0],)).fetchone() # edit[0] = db_editlog[k][0] = story_id
-        stories.append([edit[0], story[0]])  # story[0] = title
+        story = c.execute("SELECT title FROM stories WHERE story_id=?", (edit[1],)).fetchone() # edit[1] = db_editlog[k][1] = story_id
+        stories.append([edit[1], story[0]])  # story[0] = title
     # db_storyid = db_editlog[0] if db_editlog else None
     # print("\n\n\n**********")
     # print(db_storyid)
@@ -139,8 +139,7 @@ def catalog():
     for i in db_catalog:
         title = i[1]
         author = i[4]
-        select_id = c.execute("SELECT story_id FROM edits WHERE story_id=?", (i[0],)).fetchone()
-        id = select_id[0]
+        id = i[0]
         stories.append([id, title, author])
     db.close()
     return render_template('catalog.html',
@@ -163,7 +162,7 @@ def create():
             return render_template('create.html')
 
         c.execute("INSERT INTO stories (title, content, last_update, author_name) VALUES (?, ?, ?, ?)", (title, content, datetime.datetime.now(), author))
-        c.execute("INSERT INTO edits (story_id, author_name) VALUES (?, ?)", (c.lastrowid, author))
+        c.execute("INSERT INTO edits (story_id, author_name, content) VALUES (?, ?, ?)", (c.lastrowid, author, content))
         db.commit()
         db.close()
         return redirect(url_for('home'))
@@ -200,23 +199,24 @@ def edit(story_id):
         return redirect(url_for('login'))
     db = sqlite3.connect(DB_FILE)
     c = db.cursor()
+
+    prevcontent = c.execute("SELECT content FROM edits WHERE story_id=? ORDER BY edit_id DESC", (story_id,)).fetchone()[0]
+    prevtitle, allcontent = c.execute("SELECT title, content FROM stories WHERE story_id=?", (story_id,)).fetchone()
+
     if request.method == 'POST':
-        title = request.form.get('title').strip()
         content = request.form.get('content').strip()
         author = session['username']
 
-        if not title or not content:
+        if not content:
             db.close()
-            prevtitle, prevcontent = c.execute("SELECT title, content FROM stories WHERE story_id=?", (story_id,)).fetchone()
             return render_template('edit.html', story_id=story_id, prevtitle=prevtitle, prevcontent=prevcontent)
 
-        c.execute("UPDATE stories SET title=?, content=?, last_update=? WHERE story_id=?", (title, content, datetime.datetime.now(), story_id))
-        c.execute("INSERT INTO edits (story_id, author_name) VALUES (?, ?)", (story_id, author))
+        c.execute("UPDATE stories SET content=?, last_update=? WHERE story_id=?", (allcontent + content, datetime.datetime.now(), story_id))
+        c.execute("INSERT INTO edits (story_id, author_name, content) VALUES (?, ?, ?)", (story_id, author, content))
         db.commit()
         db.close()
         return redirect(url_for('story', story_id=story_id))
 
-    prevtitle, prevcontent = c.execute("SELECT title, content FROM stories WHERE story_id=?", (story_id,)).fetchone()
     db.close()
 
     return render_template('edit.html', prevtitle=prevtitle, prevcontent=prevcontent, story_id=story_id)

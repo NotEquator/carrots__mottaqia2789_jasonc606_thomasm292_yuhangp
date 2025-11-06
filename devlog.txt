@@ -103,3 +103,7 @@ jasonC -- 2025-11-05 00:48
 
 2025-11-05 23:04 - yuhangp
 - fixed style.css route
+- updated logic for story:
+	- users can only see the lastest edit
+	- can only edit the content not the title
+	- can only add to story, can't delete anything

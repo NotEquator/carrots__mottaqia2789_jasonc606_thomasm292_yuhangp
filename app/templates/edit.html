@@ -12,15 +12,14 @@
       <a href="{{ url_for('logout') }}">Logout</a>
       <a href="{{ url_for('story', story_id=story_id) }}">Back-To-Story</a>
     </nav>
-    <h1>Edit the story!</h1>
+    <h1>Add to the story!</h1>
     <form method="post">
-      <label for="title">Edit Title:</label>
+      <h2>Current Title: {{ prevtitle }}</h2>
       <br>
-      <input type="text" name="title" id="title" value="{{ prevtitle }}">
-      <br><br>
-      <label for="content">Edit Content:</label>
+      <h3>Last Edit Content: {{ prevcontent }} ------ Added content will be appended to this.</h3>
+      <label for="content">Add Content:</label>
       <br>
-      <textarea id="content" name="content" rows="30" cols="80">{{ prevcontent }}</textarea>
+      <textarea id="content" name="content" rows="30" cols="80"></textarea>
       <br><br>
       <input type="submit" name="sub1">
     </form>
