@@ -55,7 +55,7 @@ def register():
         if exists:
             db.close()
             return render_template("register.html")
-        
+
         # insert new user into table with a hashed password
         hashed_pw = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
         c.execute("INSERT INTO users (name, bio, password) VALUES (?, ?, ?)", (username, "temp bio", hashed_pw))
@@ -90,7 +90,7 @@ def login():
 
         #retrieve the hashed password
         db_hash = account[0]
-        
+
         # check if hashed password is correct, if not then reload page
         if not bcrypt.checkpw(password.encode('utf-8'), db_hash.encode('utf-8')):
             return render_template("login.html")
@@ -202,24 +202,31 @@ def edit(story_id):
 
     prevcontent = c.execute("SELECT content FROM edits WHERE story_id=? ORDER BY edit_id DESC", (story_id,)).fetchone()[0]
     prevtitle, allcontent = c.execute("SELECT title, content FROM stories WHERE story_id=?", (story_id,)).fetchone()
+    edit = c.execute("SELECT story_id FROM edits WHERE author_name=?", (session['username'],)).fetchall()
+    has_edited = False
+    for e in edit:
+        if e[0] == story_id:
+            has_edited = True
+            break
 
     if request.method == 'POST':
-        content = request.form.get('content').strip()
-        author = session['username']
+        if not has_edited:
+            content = request.form.get('content').strip()
+            author = session['username']
 
-        if not content:
+            if not content:
+                db.close()
+                return render_template('edit.html', story_id=story_id, prevtitle=prevtitle, prevcontent=prevcontent)
+
+            c.execute("UPDATE stories SET content=?, last_update=? WHERE story_id=?", (allcontent + content, datetime.datetime.now(), story_id))
+            c.execute("INSERT INTO edits (story_id, author_name, content) VALUES (?, ?, ?)", (story_id, author, content))
+            db.commit()
             db.close()
-            return render_template('edit.html', story_id=story_id, prevtitle=prevtitle, prevcontent=prevcontent)
-
-        c.execute("UPDATE stories SET content=?, last_update=? WHERE story_id=?", (allcontent + content, datetime.datetime.now(), story_id))
-        c.execute("INSERT INTO edits (story_id, author_name, content) VALUES (?, ?, ?)", (story_id, author, content))
-        db.commit()
-        db.close()
         return redirect(url_for('story', story_id=story_id))
 
     db.close()
 
-    return render_template('edit.html', prevtitle=prevtitle, prevcontent=prevcontent, story_id=story_id)
+    return render_template('edit.html', prevtitle=prevtitle, prevcontent=prevcontent, story_id=story_id, has_edited=has_edited)
 
 
 @app.route("/logout")

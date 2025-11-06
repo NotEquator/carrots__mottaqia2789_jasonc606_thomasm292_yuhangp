@@ -10,8 +10,15 @@
       <a href="{{ url_for('home') }}">Home</a>
       <a href="{{ url_for('create') }}">Create-Story</a>
       <a href="{{ url_for('logout') }}">Logout</a>
+      {% if has_edited %}
       <a href="{{ url_for('story', story_id=story_id) }}">Back-To-Story</a>
+      {% else %}
+      <a href="{{ url_for('catalog') }}">Back-To-Catalog</a>
+      {% endif %}
     </nav>
+    {% if has_edited %}
+      <span>You have edited this story.</span>
+    {% else %}
     <h1>Add to the story!</h1>
     <form method="post">
       <h2>Current Title: {{ prevtitle }}</h2>
@@ -23,5 +30,6 @@
       <br><br>
       <input type="submit" name="sub1">
     </form>
+    {% endif %}
   </body>
 </html>
