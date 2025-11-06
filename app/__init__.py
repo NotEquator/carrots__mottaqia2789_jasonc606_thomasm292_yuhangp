@@ -76,7 +76,7 @@ def login():
 
         # render login page if username or password box is empty
         if not username or not password:
-            return render_template('login.html')
+            return render_template('login.html', )
 
         #search user table for password from a certain username
         db = sqlite3.connect(DB_FILE)
@@ -112,8 +112,8 @@ def home():
     db_editlog = c.execute("SELECT * FROM edits WHERE author_name=?", (session['username'],)).fetchall()
     stories = []
     for edit in db_editlog:
-        story = c.execute("SELECT title FROM stories WHERE story_id=?", (edit[0],)).fetchone() # edit[0] = db_editlog[k][0] = story_id
-        stories.append([edit[0], story[0]])  # story[0] = title
+        story = c.execute("SELECT title FROM stories WHERE story_id=?", (edit[1],)).fetchone() # edit[1] = db_editlog[k][1] = story_id
+        stories.append([edit[1], story[0]])  # story[0] = title
     # db_storyid = db_editlog[0] if db_editlog else None
     # print("\n\n\n**********")
     # print(db_storyid)
@@ -128,6 +128,26 @@ def home():
                            stories=stories,
                            request=request.method)
 
+@app.route("/edit_profile", methods=['GET', 'POST'])
+def edit_profile():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    db = sqlite3.connect(DB_FILE)
+    c = db.cursor()
+
+    prevbio = c.execute("SELECT bio FROM users WHERE name=?", (session['username'],)).fetchone()
+    if request.method == 'POST':
+        newbio = request.form.get('newbio').strip()
+        c.execute("UPDATE users SET bio=? WHERE name=?", (newbio, session['username'],))
+        db.commit()
+        db.close()
+
+        return redirect(url_for('home'))
+
+    return render_template('edit_profile.html',
+                            prevbio = prevbio[0] if prevbio is not None else "no bio")
+
+
 @app.route("/catalog")
 def catalog():
     if 'username' not in session:
@@ -139,8 +159,7 @@ def catalog():
     for i in db_catalog:
         title = i[1]
         author = i[4]
-        select_id = c.execute("SELECT story_id FROM edits WHERE story_id=?", (i[0],)).fetchone()
-        id = select_id[0]
+        id = i[0]
         stories.append([id, title, author])
     db.close()
     return render_template('catalog.html',
@@ -200,40 +219,40 @@ def edit(story_id):
         return redirect(url_for('login'))
     db = sqlite3.connect(DB_FILE)
     c = db.cursor()
-    title2 = c.execute("SELECT title FROM stories WHERE story_id=?", (story_id,)).fetchone()[0]
+
+    prevcontent = c.execute("SELECT content FROM edits WHERE story_id=? ORDER BY edit_id DESC", (story_id,)).fetchone()[0]
+    prevtitle, allcontent = c.execute("SELECT title, content FROM stories WHERE story_id=?", (story_id,)).fetchone()
+    edit = c.execute("SELECT story_id FROM edits WHERE author_name=?", (session['username'],)).fetchall()
+    has_edited = False
+    for e in edit:
+        if e[0] == story_id:
+            has_edited = True
+            break
+
     if request.method == 'POST':
-        title = request.form.get('title').strip()
-        print("hi:" + title2)
-        content = request.form.get('content').strip()
-        author = session['username']
+        if not has_edited:
+            content = request.form.get('content').strip()
+            author = session['username']
 
-        if not title or not content:
+            if not content:
+                db.close()
+                return render_template('edit.html', story_id=story_id, prevtitle=prevtitle, prevcontent=prevcontent)
+
+            c.execute("UPDATE stories SET content=?, last_update=? WHERE story_id=?", (allcontent + content, datetime.datetime.now(), story_id))
+            c.execute("INSERT INTO edits (story_id, author_name, content) VALUES (?, ?, ?)", (story_id, author, content))
+            db.commit()
             db.close()
-            id = 0
-            prevcontents = c.execute("SELECT content FROM edits WHERE story_id=?", (story_id,)).fetchall()
-            for row in prevcontents:
-                id2 = row[0]
-                if id2 > id:
-                    id = id2
-            prevcontent = c.execute("SELECT content FROM edits WHERE edit_id=?", (id,)).fetchone()[0]
-            return render_template('edit.html', story_id=story_id, title=title2, prevcontent=prevcontent)
-
-        c.execute("UPDATE stories SET title=?, content=?, last_update=? WHERE story_id=?", (title, content, datetime.datetime.now(), story_id))
-        c.execute("INSERT INTO edits (story_id, author_name) VALUES (?, ?)", (story_id, author))
-        db.commit()
-        db.close()
         return redirect(url_for('story', story_id=story_id))
 
-    prevcontents = c.execute("SELECT content FROM edits WHERE story_id=?", (story_id,)).fetchall()
     db.close()
 
-    return render_template('edit.html', title=title2, prevcontents=prevcontents, story_id=story_id)
+    return render_template('edit.html', prevtitle=prevtitle, prevcontent=prevcontent, story_id=story_id, has_edited=has_edited)
 
 
 @app.route("/logout")
 def logout():
     session.pop('username', None) # remove username from session
-    return render_template('logout.html')
+    return redirect(url_for('login'))
 
 
 if __name__=='__main__':

@@ -95,3 +95,20 @@ jasonC -- 2025-11-02 23:08
 jasonC -- 2025-11-05 00:48
 	- edited install guide and launch codes based on the feedback we received from the other teams
 	- omg idk what i was thinking when i made that
+
+2025-11-05 22:38  -  thomasm292
+- Added CSS for the navbar
+- Added CSS for tables and forms
+- Added overall page styling and layout
+
+2025-11-05 23:04 - yuhangp
+- fixed style.css route
+- updated logic for story:
+	- users can only see the lastest edit
+	- can only edit the content not the title
+	- can only add to story, can't delete anything
+
+jasonC -- 2025-11-06 00:51
+- fixed catalog allowing user to see stories they haven't edited yet
+	- catalog now links you to edit page, where it will block you from editing if you already edited it
+- created page where you edit bio
