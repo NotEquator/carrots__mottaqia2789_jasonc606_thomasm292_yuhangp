@@ -128,6 +128,26 @@ def home():
                            stories=stories,
                            request=request.method)
 
+@app.route("/edit_profile", methods=['GET', 'POST'])
+def edit_profile():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    db = sqlite3.connect(DB_FILE)
+    c = db.cursor()
+
+    prevbio = c.execute("SELECT bio FROM users WHERE name=?", (session['username'],)).fetchone()
+    if request.method == 'POST':
+        newbio = request.form.get('newbio').strip()
+        c.execute("UPDATE users SET bio=? WHERE name=?", (newbio, session['username'],))
+        db.commit()
+        db.close()
+
+        return redirect(url_for('home'))
+
+    return render_template('edit_profile.html',
+                            prevbio = prevbio[0] if prevbio is not None else "no bio")
+
+
 @app.route("/catalog")
 def catalog():
     if 'username' not in session:
