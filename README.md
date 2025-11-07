@@ -21,7 +21,7 @@ Congratulations! You have installed the website!
 
 # Launch Codes
 Launching the website is easy. Just run this command:  
-`python It's_Just_A_Story/app/__init__.py`
+`python Its_Just_A_Story/app/__init__.py`
 
 On your broswer enter this URL:  
 `http://127.0.0.1:5000`
