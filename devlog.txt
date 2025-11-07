@@ -122,3 +122,6 @@ thomasM -- 2025-11-06 21:06
 
 yuhangP -- 2025-11-06 20:57
 - updated design doc
+
+jasonC -- 2025-11-07 00:04
+- fixed error in readme where the single quotes in the folder names in the commands messed everything up
