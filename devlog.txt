@@ -116,3 +116,6 @@ jasonC -- 2025-11-06 00:51
 
 mottaqiA -- 2025-11-07 11:44
 - added error message for login
+
+thomasM -- 2025-11-06 21:06
+- added css for the error message
