@@ -119,3 +119,6 @@ mottaqiA -- 2025-11-07 11:44
 
 thomasM -- 2025-11-06 21:06
 - added css for the error message
+
+yuhangP -- 2025-11-06 20:57
+- updated design doc
