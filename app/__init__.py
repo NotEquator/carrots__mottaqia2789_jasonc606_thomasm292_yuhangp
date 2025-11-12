@@ -12,7 +12,6 @@ from flask import redirect, url_for
 
 import sqlite3   #enable control of an sqlite database
 import datetime
-import bcrypt
 
 
 DB_FILE="discobandit.db"
@@ -56,9 +55,7 @@ def register():
             db.close()
             return render_template("register.html", error="Username already exists")
 
-        # insert new user into table with a hashed password
-        hashed_pw = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
-        c.execute("INSERT INTO users (name, bio, password) VALUES (?, ?, ?)", (username, "temp bio", hashed_pw))
+        c.execute("INSERT INTO users (name, bio, password) VALUES (?, ?, ?)", (username, "temp bio", password))
         db.commit()
         db.close()
 
@@ -88,11 +85,8 @@ def login():
         if account is None:
             return render_template("login.html", error="Username or password is incorrect")
 
-        #retrieve the hashed password
-        db_hash = account[0]
-
-        # check if hashed password is correct, if not then reload page
-        if not bcrypt.checkpw(password.encode('utf-8'), db_hash.encode('utf-8')):
+        # check if password is correct, if not then reload page
+        if account[0] != password:
             return render_template("login.html", error="Username or password is incorrect")
 
         # if password is correct redirect home
